@@ -414,13 +414,31 @@ class enrol_selfqrcode_plugin extends enrol_plugin {
         $style = 'color: #0c5460;background-color: #d1ecf1;border-color: #bee5eb;padding: 10px 15px;border: 1px solid transparent; margin: 20px 0;';
         $messagehtml .= '<div style="'.$style.'">Para registrar sua presença você precisa apresentar o QRCODE abaixo no evento. Não precisa imprimir, basta mostrar da tela do seu próprio smartphone.</div>';
 
-        $png = $barcodeobj->getBarcodePngData(12, 12);
-        $uri = "data:image/png;base64," . base64_encode($png);
+        $qrcodeimg = $barcodeobj->getBarcodePngData(12, 12);
 
-        $messagehtml .= '<img src="'. $uri . '"/>';
+        $messagehtml .= '<img src="cid:qrcodeimg"/>';
 
         // Directly emailing welcome message rather than using messaging.
-        email_to_user($user, $contact, $subject, $messagetext, $messagehtml);
+        $this->send_welcomemail($user->email, $subject, $messagetext, $messagehtml, $qrcodeimg);
+    }
+
+    public function send_welcomemail($emailto, $subject, $messagetext, $messagehtml, $image) {
+        $mail = get_mailer();
+        $noreply = 'noreply@mpma.mp.br';
+
+        $mail->Sender = $noreply;
+        $mail->From     = $noreply;
+        $mail->FromName = 'ESMP-MA';
+        $mail->Subject = $subject;
+        $mail->AddAddress($emailto);
+
+        $mail->isHTML(true);
+        $mail->Encoding = 'quoted-printable';
+        $mail->Body    =  $messagehtml;
+        $mail->AltBody = $messagetext;
+        $mail->addStringEmbeddedImage($image, 'qrcodeimg', 'qrcodeimg.png', 'base64', 'image/png');
+
+        $mail->send();
     }
 
     /**
