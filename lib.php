@@ -413,7 +413,11 @@ class enrol_selfqrcode_plugin extends enrol_plugin {
 
         $style = 'color: #0c5460;background-color: #d1ecf1;border-color: #bee5eb;padding: 10px 15px;border: 1px solid transparent; margin: 20px 0;';
         $messagehtml .= '<div style="'.$style.'">Para registrar sua presença você precisa apresentar o QRCODE abaixo no evento. Não precisa imprimir, basta mostrar da tela do seu próprio smartphone.</div>';
-        $messagehtml .= $barcodeobj->getBarcodeHTML();
+
+        $png = $barcodeobj->getBarcodePngData(12, 12);
+        $uri = "data:image/png;base64," . base64_encode($png);
+
+        $messagehtml .= '<img src="'. $uri . '"/>';
 
         // Directly emailing welcome message rather than using messaging.
         email_to_user($user, $contact, $subject, $messagetext, $messagehtml);
