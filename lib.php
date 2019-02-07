@@ -415,20 +415,20 @@ class enrol_selfqrcode_plugin extends enrol_plugin {
         $messagehtml .= '<div style="'.$style.'">Para registrar sua presença você precisa apresentar o QRCODE abaixo no evento. Não precisa imprimir, basta mostrar da tela do seu próprio smartphone.</div>';
 
         $qrcodeimg = $barcodeobj->getBarcodePngData(12, 12);
-
         $messagehtml .= '<img src="cid:qrcodeimg"/>';
 
         // Directly emailing welcome message rather than using messaging.
-        $this->send_welcomemail($user->email, $subject, $messagetext, $messagehtml, $qrcodeimg);
+        $this->send_welcomemail($user->email, $contact, $subject, $messagetext, $messagehtml, $qrcodeimg);
     }
 
-    public function send_welcomemail($emailto, $subject, $messagetext, $messagehtml, $image) {
-        $mail = get_mailer();
-        $noreply = 'noreply@mpma.mp.br';
+    public function send_welcomemail($emailto, $contact, $subject, $messagetext, $messagehtml, $image) {
+        global $SITE;
 
-        $mail->Sender = $noreply;
-        $mail->From     = $noreply;
-        $mail->FromName = 'ESMP-MA';
+        $mail = get_mailer();
+
+        $mail->Sender = $contact->email;
+        $mail->From     = $contact->email;
+        $mail->FromName = $SITE->shortname;
         $mail->Subject = $subject;
         $mail->AddAddress($emailto);
 
