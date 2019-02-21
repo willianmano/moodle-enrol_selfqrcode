@@ -176,6 +176,9 @@ class enrol_selfqrcode_plugin extends enrol_plugin {
         if ($instance->customint4 != ENROL_DO_NOT_SEND_EMAIL) {
             $this->email_welcome_message($instance, $USER);
         }
+
+        // Exibe uma mensagem apos efetuada a inscricao no curso.
+        \core\notification::add('Inscrição efetuada com sucesso', 'success');
     }
 
     /**
